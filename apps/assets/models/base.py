@@ -121,6 +121,8 @@ class AssetUser(OrgModelMixin):
             auth_book = get_object_or_none(
                 AuthBook, asset=asset, username=self.username
             )
+            if auth_book is None:
+                raise ValueError
             result = {
                 'password': auth_book.password,
                 'public_key': auth_book.public_key,
