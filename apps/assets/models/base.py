@@ -106,7 +106,31 @@ class AssetUser(OrgModelMixin):
             self.save(update_fields=update_fields)
 
     def get_auth(self, asset=None):
-        pass
+        from common.utils import get_object_or_none
+        from ..models import AuthBook
+
+        if asset is None:
+            result = {
+                'password': self.password,
+                'public_key': self.public_key,
+                'private_key': self.private_key
+            }
+            return result
+
+        elif settings.AUTH_BOOK:
+            auth_book = get_object_or_none(
+                AuthBook, asset=asset, username=self.username
+            )
+            result = {
+                'password': auth_book.password,
+                'public_key': auth_book.public_key,
+                'private_key': auth_book.private_key
+            }
+            return result
+
+        elif settings.AUTH_VAULT:
+            # TODO: get auth from vault
+            pass
 
     def clear_auth(self):
         self._password = ''
